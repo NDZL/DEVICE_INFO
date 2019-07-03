@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAssignedNumbers;
 import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -22,6 +23,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -30,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,11 +79,22 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     Intent iBattStat;
 
     Button btLaunch;
+    Button virtKeyb;
+    static public boolean bvirtualoff = true;
+
+    Button btCamera;
+    public static Intent service_is;
+    public static Context main_context;
+    Button btSpeak;
+    Button btWait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        main_context = this;
+        service_is = new Intent(this, SpeakerService.class);
 
         String DeviceSERIALNumber = Build.SERIAL;
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
@@ -120,12 +134,58 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
         btOpenGMPAS.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                Intent i = new Intent();
-//                i.setAction(ACTION_VIEW);
-//                i.setPackage("com.google.android.apps.maps");
+                Intent i = new Intent();
+                i.setAction(ACTION_VIEW);
+                i.setPackage("com.google.android.apps.maps");
 
-                Intent i =  getPackageManager().getLaunchIntentForPackage("nexive.settings.autoclock");
+                //Intent i =  getPackageManager().getLaunchIntentForPackage("nexive.settings.autoclock");
                 startActivity(i);
+            }
+        });
+
+
+        virtKeyb = (Button) findViewById(R.id.btVirtualKeyb);
+        virtKeyb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(bvirtualoff) {
+                    String[] modifyData = new String[1];
+                    EMDKResults results = profileManager.processProfile("VIRTUALKEYB_SHOW", ProfileManager.PROFILE_FLAG.SET, modifyData);
+                    MainActivity.bvirtualoff=false;
+                }
+                else{
+                    String[] modifyData = new String[1];
+                    EMDKResults results = profileManager.processProfile("VIRTUALKEYB_HIDE", ProfileManager.PROFILE_FLAG.SET, modifyData);
+                    MainActivity.bvirtualoff=true;
+                }
+            }
+        });
+
+
+
+        btCamera = (Button) findViewById(R.id.btCamera);
+        btCamera.setOnClickListener(new
+                                            View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    dispatchTakePictureIntent();
+                                                }
+                                            });
+
+
+        btSpeak = (Button) findViewById(R.id.btSpeak);
+        btSpeak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                httpGET_SPEAK("3", "HELLO-NES");
+            }
+        });
+
+        btWait= (Button) findViewById(R.id.btWait);
+        btWait.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                httpGET_WAIT("3");
             }
         });
 
@@ -156,6 +216,28 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         mIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
 
         readXMLbackupVoltageThresholds();
+
+        serviceTalk("CIAO NICOLA");
+    }
+    final int REQUEST_IMAGE_CAPTURE = 1;
+
+    //https://developer.android.com/training/camera/photobasics#java
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    public void httpGET_SPEAK(String destinationChannel, String messageToBeSent) {
+        String _msg = messageToBeSent.replaceAll(" ", "-").toUpperCase();
+        String _url ="https://clouddumplogger.appspot.com/cmb?speak="+_msg+"&ch="+destinationChannel;
+        new HTTP_GET().execute(_url);
+    }
+
+    public void httpGET_WAIT(String listeningOnChannel) {
+        String _url ="https://clouddumplogger.appspot.com/cmb?wait-on-channel="+listeningOnChannel;
+        new HTTP_GET().execute(_url);
     }
 
     void readBatteryInfo() {
@@ -373,6 +455,11 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
     }
 
+    void serviceTalk(String words){
+        service_is.putExtra("WORDS_TO_SAY", words);
+        service_is.putExtra("LANGUAGE", "ITA");
+        startService(service_is);
+    }
 
 
     class MyLocationListener implements LocationListener {

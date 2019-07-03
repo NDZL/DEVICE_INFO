@@ -1,44 +1,52 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:isScrollContainer="true"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context="wipe.ndzl.com.deviceinfo.ndzl.com.MainActivity">
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="wipe.ndzl.com.deviceinfo.ndzl.com.MainActivity">
 
 
     <TextView
-        android:text="TextView"
+        android:id="@+id/tvOutput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvOutput"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="TextView"
         android:textSize="18sp" />
 
     <TextView
-        android:text="battery Info"
+        android:id="@+id/tvBattery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvOutput"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginTop="50dp"
-        android:id="@+id/tvBattery"
+        android:text="battery Info"
         android:textSize="24sp"
         android:textStyle="normal|bold" />
 
     <Button
-        android:text="Open GMAPS"
+        android:id="@+id/btOpenGMPAS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btOpenGMPAS"
-        android:layout_marginRight="22dp"
-        android:layout_marginEnd="22dp"
-        android:layout_marginTop="13dp"
         android:layout_below="@+id/tvBattery"
+        android:layout_alignEnd="@+id/tvBattery"
         android:layout_alignRight="@+id/tvBattery"
-        android:layout_alignEnd="@+id/tvBattery" />
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:text="GMAPS" />
 
     <Button
         android:id="@+id/idLaunch"
@@ -47,5 +55,46 @@
         android:layout_alignBottom="@+id/btOpenGMPAS"
         android:layout_alignParentStart="true"
         android:layout_marginStart="114dp"
-        android:text="Run Launcher" />
+        android:text="Launcher3" />
+
+    <Button
+        android:id="@+id/btVirtualKeyb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="250dp"
+        android:text="Vkeyb" />
+
+    <Button
+        android:id="@+id/btCamera"
+        android:layout_width="94dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="257dp"
+        android:layout_toEndOf="@+id/btVirtualKeyb"
+        android:text="Camera" />
+
+    <Button
+        android:id="@+id/btSpeak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btVirtualKeyb"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="122dp"
+        android:layout_marginTop="84dp"
+        android:text="Say Hello" />
+
+    <Button
+        android:id="@+id/btWait"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btVirtualKeyb"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="90dp"
+        android:text="Wait" />
 </RelativeLayout>
+</ScrollView>
