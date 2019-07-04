@@ -13,7 +13,7 @@ import static android.content.ContentValues.TAG;
 
 public class SpeakerService extends IntentService implements TextToSpeech.OnInitListener {
 
-    TextToSpeech tts;
+    static TextToSpeech tts;
     String WORDS_TO_SAY="HELLO WORLD";
     String LANGUAGE="ITA";
 
@@ -28,9 +28,9 @@ public class SpeakerService extends IntentService implements TextToSpeech.OnInit
     }
 
 
-    private void parlaTesto(final String testo) {
+    public static void parlaTesto(final String testo) {
         Log.i(TAG, "speaking " + testo);
-        tts.speak(testo, TextToSpeech.QUEUE_FLUSH, null, "" + this.hashCode());
+        tts.speak(testo, TextToSpeech.QUEUE_FLUSH, null, ""/* + this.hashCode()*/);
     }
 
 
@@ -68,9 +68,28 @@ public class SpeakerService extends IntentService implements TextToSpeech.OnInit
         super(name);
     }
 
+    /*
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        WORDS_TO_SAY = workIntent.getStringExtra("WORDS_TO_SAY");
+        LANGUAGE = workIntent.getStringExtra("LANGUAGE");
+
+        Thread _t = new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                initTTSandSpeak(WORDS_TO_SAY);
+            }
+        };
+        _t.start();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+*/
     public SpeakerService() {
         super("");
     }
+
 
 
 
@@ -89,7 +108,6 @@ public class SpeakerService extends IntentService implements TextToSpeech.OnInit
         _t.start();
 
         }
-
 
     }
 

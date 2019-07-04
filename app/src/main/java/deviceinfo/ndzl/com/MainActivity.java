@@ -177,7 +177,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         btSpeak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                httpGET_SPEAK("3", "HELLO-NES");
+                httpGET_SPEAK("3", "QUI-ZEBRA-TECHONOLOGIES");
             }
         });
 
@@ -232,12 +232,12 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     public void httpGET_SPEAK(String destinationChannel, String messageToBeSent) {
         String _msg = messageToBeSent.replaceAll(" ", "-").toUpperCase();
         String _url ="https://clouddumplogger.appspot.com/cmb?speak="+_msg+"&ch="+destinationChannel;
-        new HTTP_GET().execute(_url);
+        new HTTP_GET().execute(_url, "false");
     }
 
     public void httpGET_WAIT(String listeningOnChannel) {
         String _url ="https://clouddumplogger.appspot.com/cmb?wait-on-channel="+listeningOnChannel;
-        new HTTP_GET().execute(_url);
+        new HTTP_GET().execute(_url, "loop");
     }
 
     void readBatteryInfo() {
@@ -455,7 +455,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
     }
 
-    void serviceTalk(String words){
+    void serviceTalk(String words){<
         service_is.putExtra("WORDS_TO_SAY", words);
         service_is.putExtra("LANGUAGE", "ITA");
         startService(service_is);

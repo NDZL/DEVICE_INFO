@@ -1,8 +1,5 @@
 package deviceinfo.ndzl.com;
 
-
-import android.app.Application;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -14,21 +11,21 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static deviceinfo.ndzl.com.MainActivity.main_context;
-import static deviceinfo.ndzl.com.MainActivity.service_is;
 
 public class HTTP_GET extends AsyncTask<String , Void ,String> {
     String server_response;
-
+    URL url;
+    boolean bDoLoop = false;
 
     @Override
     protected String doInBackground(String... strings) {
 
-        URL url;
+
         HttpURLConnection urlConnection = null;
 
         try {
             url = new URL(strings[0]);
+            bDoLoop = strings[1].equalsIgnoreCase("loop") ? true : false;
             urlConnection = (HttpURLConnection) url.openConnection();
 
             int responseCode = urlConnection.getResponseCode();
@@ -59,12 +56,20 @@ public class HTTP_GET extends AsyncTask<String , Void ,String> {
             }
         }
 
+        if(bDoLoop){
+            new HTTP_GET().execute(url.toString(), "loop");
+        }
+
     }
 
     void serviceTalk(String words){
+        /*
         service_is.putExtra("WORDS_TO_SAY", words);
         service_is.putExtra("LANGUAGE", "ITA");
+
         main_context.startService(service_is);
+        */
+        SpeakerService.parlaTesto(words);
     }
 
     private String readStream(InputStream in) {
