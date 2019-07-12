@@ -1,9 +1,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:isScrollContainer="true"
@@ -96,5 +96,21 @@
         android:layout_marginStart="31dp"
         android:layout_marginTop="90dp"
         android:text="Wait" />
+
+    <EditText
+        android:id="@+id/etPTT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btSpeak"
+        android:layout_below="@+id/btCamera"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="-54dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Questo è un test vocale: a a a" />
 </RelativeLayout>
 </ScrollView>

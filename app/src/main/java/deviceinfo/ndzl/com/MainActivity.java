@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -87,6 +90,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     public static Context main_context;
     Button btSpeak;
     Button btWait;
+    EditText etPTT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,7 +181,8 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         btSpeak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                httpGET_SPEAK("3", "QUI-ZEBRA-TECHONOLOGIES");
+                String daparlare = etPTT.getText().toString();
+                httpGET_SPEAK("3", daparlare);
             }
         });
 
@@ -185,9 +190,13 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         btWait.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SpeakerService.parlaTesto("in attesa sul canale 3");
                 httpGET_WAIT("3");
             }
         });
+
+        etPTT = (EditText)findViewById(R.id.etPTT);
+
 
         tim = new Timer("NIK", false);
         tim.schedule(new TimerTask() {
@@ -230,13 +239,20 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     }
 
     public void httpGET_SPEAK(String destinationChannel, String messageToBeSent) {
-        String _msg = messageToBeSent.replaceAll(" ", "-").toUpperCase();
+        //String _msg = messageToBeSent.replaceAll(" ", "_").toUpperCase();
+        String _msg = null;
+        try {
+            _msg = URLEncoder.encode(messageToBeSent, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String _url ="https://clouddumplogger.appspot.com/cmb?speak="+_msg+"&ch="+destinationChannel;
         new HTTP_GET().execute(_url, "false");
     }
 
     public void httpGET_WAIT(String listeningOnChannel) {
         String _url ="https://clouddumplogger.appspot.com/cmb?wait-on-channel="+listeningOnChannel;
+
         new HTTP_GET().execute(_url, "loop");
     }
 
@@ -455,7 +471,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
     }
 
-    void serviceTalk(String words){<
+    void serviceTalk(String words){
         service_is.putExtra("WORDS_TO_SAY", words);
         service_is.putExtra("LANGUAGE", "ITA");
         startService(service_is);

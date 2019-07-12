@@ -6,6 +6,8 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Locale;
 
 import static android.content.ContentValues.TAG;
@@ -30,7 +32,14 @@ public class SpeakerService extends IntentService implements TextToSpeech.OnInit
 
     public static void parlaTesto(final String testo) {
         Log.i(TAG, "speaking " + testo);
-        tts.speak(testo, TextToSpeech.QUEUE_FLUSH, null, ""/* + this.hashCode()*/);
+        //String _clean = testo.replaceAll("_", " ");
+        String _clean = null;
+        try {
+            _clean = URLDecoder.decode(testo, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        tts.speak(_clean, TextToSpeech.QUEUE_FLUSH, null, ""/* + this.hashCode()*/);
     }
 
 
