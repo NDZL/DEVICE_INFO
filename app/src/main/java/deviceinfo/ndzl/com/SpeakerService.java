@@ -39,7 +39,7 @@ public class SpeakerService extends IntentService implements TextToSpeech.OnInit
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        tts.speak(_clean, TextToSpeech.QUEUE_FLUSH, null, ""/* + this.hashCode()*/);
+        //tts.speak(_clean, TextToSpeech.QUEUE_FLUSH, null, ""/* + this.hashCode()*/);
     }
 
 

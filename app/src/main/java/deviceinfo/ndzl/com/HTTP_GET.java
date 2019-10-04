@@ -17,6 +17,7 @@ public class HTTP_GET extends AsyncTask<String , Void ,String> {
     URL url;
     boolean bDoLoop = false;
 
+
     @Override
     protected String doInBackground(String... strings) {
 
@@ -54,6 +55,15 @@ public class HTTP_GET extends AsyncTask<String , Void ,String> {
             if(whattosay.length==2){
                 serviceTalk(whattosay[1]);
             }
+        }
+        if(server_response.contains("assignedchannel")){
+            String[] _ac = server_response.split("=");
+            String assigned_channel="";
+            if(_ac.length==2){
+                assigned_channel = _ac[1];
+            }
+            String _url ="https://clouddumplogger.appspot.com/cmb?wait-on-channel="+assigned_channel;
+            new HTTP_GET().execute(_url, "loop");
         }
 
         if(bDoLoop){

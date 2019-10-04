@@ -91,7 +91,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     Button btSpeak;
     Button btWait;
     EditText etPTT;
-
+    String androidId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         String DeviceSERIALNumber = Build.SERIAL;
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
         String DeviceIMEI = telephonyManager.getDeviceId();
-        String androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         tvOut = (TextView) findViewById(R.id.tvOutput);
         tvBattery = (TextView) findViewById(R.id.tvBattery);
@@ -250,11 +250,18 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         new HTTP_GET().execute(_url, "false");
     }
 
-    public void httpGET_WAIT(String listeningOnChannel) {
-        String _url ="https://clouddumplogger.appspot.com/cmb?wait-on-channel="+listeningOnChannel;
 
-        new HTTP_GET().execute(_url, "loop");
+    public void httpGET_WAIT(String listeningOnChannel) {
+
+        //ANDROID_ID Added in API level 3 public static final String ANDROID_ID On Android 8.0 (API level 26) and higher versions of the platform, a 64-bit number (expressed as a hexadecimal string), unique to each combination of app-signing key, user, and device. Values of ANDROID_ID are scoped by signing key and user. The value may change if a factory reset is performed on the device or if an APK signing key changes. For more information about how the platform handles ANDROID_ID in Android 8.0 (API level 26) and higher, see Android 8.0 Behavior Changes.
+
+        String _askchannel_url = "https://clouddumplogger.appspot.com/cmb?assign-channel-to="+  androidId ;
+         new HTTP_GET().execute(_askchannel_url, "false");
+
+
+
     }
+
 
     void readBatteryInfo() {
         iBattStat = registerReceiver(null, mIntentFilter);
@@ -449,7 +456,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
                 .setAutoCancel(true)
                 //.setPriority(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setColor(Color.RED)
+                //.setColor(Color.RED)
                 .setLights(Color.YELLOW, 100, 200);
 
 
