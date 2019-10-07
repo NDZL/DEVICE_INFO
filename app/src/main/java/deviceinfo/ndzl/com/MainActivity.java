@@ -255,7 +255,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
         //ANDROID_ID Added in API level 3 public static final String ANDROID_ID On Android 8.0 (API level 26) and higher versions of the platform, a 64-bit number (expressed as a hexadecimal string), unique to each combination of app-signing key, user, and device. Values of ANDROID_ID are scoped by signing key and user. The value may change if a factory reset is performed on the device or if an APK signing key changes. For more information about how the platform handles ANDROID_ID in Android 8.0 (API level 26) and higher, see Android 8.0 Behavior Changes.
 
-        String _askchannel_url = "https://clouddumplogger.appspot.com/cmb?assign-channel-to="+  androidId ;
+        String _askchannel_url = "https://clouddumplogger.appspot.com/cmb?assign-channel-to="+listeningOnChannel;//  androidId ;
          new HTTP_GET().execute(_askchannel_url, "false");
 
 
@@ -469,7 +469,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         runningIntent.setData(Uri.fromParts("package", "deviceinfo.ndzl.com", null));
         PendingIntent pi = PendingIntent.getActivity(this, 0, runningIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        note.setLatestEventInfo(this, "N.DZL NOTIFIC. TITLE", "Touch for more information or to stop the app", pi); //
+        //note.setLatestEventInfo(this, "N.DZL NOTIFIC. TITLE", "Touch for more information or to stop the app", pi); //
         note.ledARGB = Color.YELLOW;
         NotificationManager mgr = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         mgr.notify(0, note);
