@@ -102,7 +102,12 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
         String DeviceSERIALNumber = Build.SERIAL;
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
-        String DeviceIMEI = telephonyManager.getDeviceId();
+        String DeviceIMEI = null;
+        try {
+            DeviceIMEI = telephonyManager.getDeviceId();
+        } catch (SecurityException se) {
+            DeviceIMEI="NO_IMEI";
+        }
         androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         tvOut = (TextView) findViewById(R.id.tvOutput);
