@@ -57,6 +57,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -91,6 +92,8 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     Button btSpeak;
     Button btWait;
     EditText etPTT;
+    Button btCPUtest;
+
     String androidId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,8 +176,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
 
         btCamera = (Button) findViewById(R.id.btCamera);
-        btCamera.setOnClickListener(new
-                                            View.OnClickListener() {
+        btCamera.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
                                                     dispatchTakePictureIntent();
@@ -202,6 +204,22 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
         etPTT = (EditText)findViewById(R.id.etPTT);
 
+        btCPUtest= (Button) findViewById(R.id.cputest);
+        btCPUtest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(getApplicationContext(), "CPU Test started", Toast.LENGTH_SHORT).show();
+                Random rnd = new Random();
+                double d =1.0;
+                long t0 = System.currentTimeMillis();
+                for(int i=0; i<10000; i++){
+                    d=d*Math.sin(2*Math.PI*rnd.nextDouble()) +Math.hypot(rnd.nextDouble(), rnd.nextDouble());
+                }
+                long t1 = System.currentTimeMillis();
+
+                Toast.makeText(getApplicationContext(), "10000 iter., time "+(t1-t0)+"ms\n result="+d, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         tim = new Timer("NIK", false);
         tim.schedule(new TimerTask() {
