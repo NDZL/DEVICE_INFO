@@ -48,4 +48,13 @@
       <parm name="ShowVirtualKeyBoard" value="2"/>
     </characteristic>
   </characteristic>
+  <characteristic type="Profile">
+    <parm name="ProfileName" value="REBOOT"/>
+    <parm name="ModifiedDate" value="2020-01-09 14:08:45"/>
+    <parm name="TargetSystemVersion" value="4.4"/>
+    <characteristic type="PowerMgr" version="4.2">
+      <parm name="emdk_name" value=""/>
+      <parm name="ResetAction" value="4"/>
+    </characteristic>
+  </characteristic>
 </wap-provisioningdoc>

@@ -23,6 +23,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -93,8 +94,12 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
     Button btWait;
     EditText etPTT;
     Button btCPUtest;
+    Button btReboot;
 
     String androidId;
+    LocationManager locationManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,6 +226,17 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
             }
         });
 
+        btReboot= (Button) findViewById(R.id.btReboot);
+        btReboot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String[] modifyData = new String[1];
+
+                EMDKResults results = profileManager.processProfile("REBOOT", ProfileManager.PROFILE_FLAG.SET, modifyData);
+            }
+        });
+
         tim = new Timer("NIK", false);
         tim.schedule(new TimerTask() {
             @Override
@@ -250,6 +266,15 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
         readXMLbackupVoltageThresholds();
 
         serviceTalk("CIAO NICOLA");
+
+        //GPS ROLLOVER TEST NOV.4,2019
+         locationManager = (LocationManager)  getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener();
+        try {
+            locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 5000, 0.1f, locationListener);
+        } catch (SecurityException se) {
+            int a=0;
+        }
     }
     final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -517,7 +542,9 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
             // Toast.makeText(  getBaseContext(), "Location changed: Lat: " + loc.getLatitude() + " Lng: " + loc.getLongitude(), Toast.LENGTH_SHORT).show();
             latit = "" + loc.getLatitude();
             longit = "" + loc.getLongitude();
-            tvOut.setText("Lat: " + loc.getLatitude() + " Lng: " + loc.getLongitude());
+            String gps_time = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS").format(loc.getTime());
+
+            tvOut.setText(""+gps_time+ " Lat:" + loc.getLatitude() + " Lng:" + loc.getLongitude());
 
 
 //        String longitude = "Longitude: " + loc.getLongitude();
