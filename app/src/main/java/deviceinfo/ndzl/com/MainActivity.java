@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothAssignedNumbers;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -55,10 +57,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -127,7 +131,28 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
             @Override
             public void onClick(View view) {
 
-                startActivity( new Intent().setComponent( new ComponentName("com.android.launcher3", "com.android.launcher3.Launcher")));
+                //startActivity( new Intent().setComponent( new ComponentName("com.android.launcher3", "com.android.launcher3.Launcher")));
+
+                //28 OTT 2020 TEST X MATTIA BARWARE, REMOVE ALL BT PAIRING
+                //https://stackoverflow.com/questions/39531986/delete-all-paired-bluetooth-devices-on-android/39533790
+
+                Toast.makeText(getApplicationContext(), "TRYING BT PAIRING REMOVAL", Toast.LENGTH_SHORT).show();
+
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                if (pairedDevices.size() > 0) {
+                    for (BluetoothDevice device : pairedDevices) {
+                        try {
+                            //if(device.getName().contains("abc")){
+                                Method m = device.getClass()
+                                        .getMethod("removeBond", (Class[]) null);
+                                m.invoke(device, (Object[]) null);
+                            //}
+                        } catch (Exception e) {
+                            Log.e("fail", e.getMessage());
+                        }
+                    }
+                }
 
             }
 
@@ -146,6 +171,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
             // EMDKManager object creation failed.
         }
 
+        //Intent i =  getPackageManager().getLaunchIntentForPackage("nexive.settings.autoclock");
 
         Button btOpenGMPAS = (Button) findViewById(R.id.btOpenGMPAS);
 
@@ -153,9 +179,12 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
             public void onClick(View v) {
                 Intent i = new Intent();
                 i.setAction(ACTION_VIEW);
-                i.setPackage("com.google.android.apps.maps");
+                //i.setPackage("com.google.android.apps.maps");
 
-                //Intent i =  getPackageManager().getLaunchIntentForPackage("nexive.settings.autoclock");
+                ComponentName cn = new ComponentName("com.symbol.btapp", "com.symbol.btapp.BTActivity");
+
+                i.setComponent(cn);
+
                 startActivity(i);
             }
         });
