@@ -1,5 +1,6 @@
-package deviceinfo.ndzl.com;
+    package deviceinfo.ndzl.com;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -17,6 +18,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
+import android.inputmethodservice.InputMethodService;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -25,6 +27,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -34,6 +38,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputConnection;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.QuickContactBadge;
@@ -255,6 +260,14 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
             }
         });
 
+       // public final static int DISPATCH_KEY_FROM_IME = 10028;
+        /*public static final int KEYCODE_SYMBOL_BLUE = 10027;
+
+        public static final int KEYCODE_SYMBOL_ORANGE = 10028;
+
+        public static final int KEYCODE_SYMBOL_SHIFT = 10032;
+        */
+
         btReboot= (Button) findViewById(R.id.btReboot);
         btReboot.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,7 +275,10 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
                 String[] modifyData = new String[1];
 
-                EMDKResults results = profileManager.processProfile("REBOOT", ProfileManager.PROFILE_FLAG.SET, modifyData);
+                //EMDKResults results = profileManager.processProfile("REBOOT", ProfileManager.PROFILE_FLAG.SET, modifyData);
+
+                //TRYING TO SET THE STATUS OF ORANGE BUTTON IN MC22 MC33
+
             }
         });
 
@@ -273,7 +289,7 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //readBatteryInfo();
+                        readBatteryInfo();
                     }
 
                 });
@@ -296,15 +312,58 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
         serviceTalk("CIAO NICOLA");
 
-        //GPS ROLLOVER TEST NOV.4,2019
-         locationManager = (LocationManager)  getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new MyLocationListener();
-        try {
-            locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 5000, 0.1f, locationListener);
-        } catch (SecurityException se) {
-            int a=0;
+        hideNavBar(); //a test
+
+        //RUNTIME PERMISSIONS
+        requestPermissions(   new String[]{ Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                3003);
+    }
+
+    void hideNavBar(){
+        View decorView = getWindow().getDecorView();
+// Hide both the navigation bar and the status bar.
+// SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+// a general rule, you should design your app to hide the status bar whenever you
+// hide the navigation bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 3003: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //GPS ROLLOVER TEST NOV.4,2019
+                    //TESTS FOR PRINTERS POSITION, DEC.10,2020
+                    locationManager = (LocationManager)  getSystemService(Context.LOCATION_SERVICE);
+                    LocationListener locationListener = new MyLocationListener();
+                    try {
+                        //LocationManager.GPS_PROVIDER: GPS TESTED SUCCESSFULLY ON TC25 API 27 - ON WAN NETWORK WITH GPS ENABLED / HIGH ACCURACY
+                        //LocationManager.NETWORK_PROVIDER: WORKS FINE, NEEDS TO BE CALLED FIRST, NOT IN THE EXCEPTION CATCH
+                        // NETWORK_PROVIDER WORKS ON TC57 WITH WAN SWITCHED OFF AND WLAN ENABLED BUT NOT CONNECTED
+                        //  MC22 after enabling locationing in GMaps! il solo flag del menu Location non dava accesso alle coordinate... Connesso a WLAN-.
+                        // TC20 ok ma collegato a rete WLAN
+
+                        locationManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    } catch (SecurityException se) { int a=0;  }
+                    catch (IllegalArgumentException iae){
+                        //GPS not provided - OR LOCATIONING NOT ENABLED
+                        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Permissions denied, stopping here sorry.", Toast.LENGTH_SHORT).show();
+                    System.exit(0);
+                }
+            }
         }
     }
+
+
+
     final int REQUEST_IMAGE_CAPTURE = 1;
 
     //https://developer.android.com/training/camera/photobasics#java
@@ -575,42 +634,21 @@ public class MainActivity extends Activity implements EMDKManager.EMDKListener {
 
             tvOut.setText(""+gps_time+ " Lat:" + loc.getLatitude() + " Lng:" + loc.getLongitude());
 
-
-//        String longitude = "Longitude: " + loc.getLongitude();
-//        Log.v(TAG, longitude);
-//        String latitude = "Latitude: " + loc.getLatitude();
-//        Log.v(TAG, latitude);
-//
-//        /*------- To get city name from coordinates -------- */
-//        String cityName = null;
-//        Geocoder gcd = new Geocoder(this.getBaseContext(), Locale.getDefault());
-//        List<Address> addresses;
-//        try {
-//            addresses = gcd.getFromLocation(loc.getLatitude(),
-//                    loc.getLongitude(), 1);
-//            if (addresses.size() > 0) {
-//                System.out.println(addresses.get(0).getLocality());
-//                cityName = addresses.get(0).getLocality();
-//            }
-//
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        String s = longitude + "\n" + latitude + "\n\nMy Current City is: "+ cityName;
-
         }
 
         @Override
         public void onProviderDisabled(String provider) {
+            tvOut.setText("Locationing Listener::onProviderDisabled");
         }
 
         @Override
         public void onProviderEnabled(String provider) {
+            tvOut.setText("Locationing Listener::onProviderEnabled");
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
+            tvOut.setText("Locationing Listener::onStatusChanged");
         }
     }
 
